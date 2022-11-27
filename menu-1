@@ -1,0 +1,357 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <time.h>
+
+char status[3][255] = {"active", "annual leave", "inactive"};
+
+typedef struct 
+{
+	char id[255];
+	char name[255];
+	int status;
+	int working_period;
+	double initial_salary;
+	double projected_salary;
+} employee_t;
+
+employee_t employees[11];
+int employee_counter = 0;
+
+void print_employee_status_list();
+void print_menu_type_list();
+
+void show_main_menu();
+void app();
+
+
+void show_employee_submenu();
+void employee_submenu();
+void generate_employee_id(char name[], char initial[]);
+void view_employees();
+void register_employee();
+void print_employee_details(employee_t);
+void change_status_employee();
+int find_employee(char id[]);
+int count_active_employees();
+
+int main()
+{
+	srand(time(NULL));
+	app();
+
+	return 0;
+}
+
+void show_main_menu()
+{
+	printf("\nMAIN MENU\n");
+	printf("1. Employee Management\n");
+	printf("2. Menu Management\n");
+	printf("3. Order Management\n");
+	printf("4. Daily Report\n");
+	printf("5. Exit\n");
+	printf("Choice: ");
+}
+
+
+void show_employee_submenu()
+{
+	printf("\nEMPLOYEE MANAGEMENT SUBMENU\n");
+	printf("1. View employees\n");
+	printf("2. Register employee\n");
+	printf("3. Change status\n");
+	printf("4. Back to main menu\n");
+	printf("Choice: ");
+}
+
+void app()
+{
+	int choice;
+	do
+	{
+		show_main_menu();
+
+		scanf("%d", &choice);
+
+		if (choice == 1)
+		{
+			employee_submenu();
+		}
+		else if (choice == 2)
+		{
+		}
+		else if (choice == 3)
+		{
+		}
+		else if (choice == 4)
+		{
+		}
+		else if (choice == 5)
+		{
+			printf("\nEXIT...\n");
+		}
+		else
+		{
+			printf("\nPlease input a proper menu choice!\n");
+		}
+
+	} while (choice != 5);
+}
+
+void employee_submenu()
+{
+	int choice;
+
+	do
+	{
+		show_employee_submenu();
+		scanf("%d", &choice);
+
+		if (choice == 1)
+		{
+			printf("\nVIEW EMPLOYEES\n");
+			view_employees();
+		}
+		else if (choice == 2)
+		{
+			printf("\nREGISTER EMPLOYEE\n");
+			register_employee();
+		}
+		else if (choice == 3)
+		{
+			printf("\nCHANGE EMPLOYEE STATUS\n");
+			change_status_employee();
+		}
+		else if (choice == 4)
+		{
+			printf("\nBACK TO MAIN MENU\n");
+		}
+		else
+		{
+			printf("\nPlease input a proper menu choice!\n");
+		}
+	} while (choice != 4);
+}
+
+void view_employees()
+{
+	int i;
+	for (i = 0; i < employee_counter; i++)
+	{
+		print_employee_details(employees[i]);
+	}
+}
+
+void print_employee_details(employee_t employee)
+{
+	printf("\nEmployee #%s\n", employee.id);
+	printf("id: %s\n", employee.id);
+	printf("name: %s\n", employee.name);
+	printf("status: %s\n", status[employee.status]);
+	printf("working periode: %d\n", employee.working_period);
+	printf("initial salary: %.2lf\n", employee.initial_salary);
+	printf("projected salary: %.2lf\n", employee.projected_salary);
+}
+
+void print_employee_status_list()
+{
+	printf("Status:\n");
+	int i;
+	for (i = 0; i < 3; i++)
+	{
+		printf("%d) %s\n", i + 1, status[i]);
+	}
+}
+
+void register_employee()
+{
+	if (count_active_employees() == 10)
+	{
+		printf("All employee is active. You can't fired your employee!\n");
+		return;
+	}
+
+	getchar();
+	employee_t employee;
+
+	printf("Input name: ");
+	scanf("%[^\n]", employee.name);
+
+	generate_employee_id(employee.name, employee.id);
+
+	print_employee_status_list();
+	int status_choice;
+
+	do
+	{
+		printf("Input status: ");
+		scanf("%d", &status_choice);
+
+		if (status_choice < 1 && status_choice > 3)
+		{
+			printf("Please input a proper status choice!\n");
+		}
+	} while (status_choice < 1 && status_choice > 3);
+
+	employee.status = status_choice - 1;
+
+	int working_periode;
+	do
+	{
+		printf("Input working periode: ");
+		scanf("%d", &working_periode);
+
+		if (working_periode < 0)
+		{
+			printf("Please input a proper working periode!\n");
+		}
+	} while (working_periode < 0);
+
+	employee.working_period = working_periode;
+
+	double initial_salary;
+	do
+	{
+		printf("Input initial salary: ");
+		scanf("%lf", &initial_salary);
+
+		if (initial_salary < 0)
+		{
+			printf("Please input a proper initial salary!\n");
+		}
+	} while (initial_salary < 0);
+
+	employee.initial_salary = initial_salary;
+
+	employee.projected_salary = employee.initial_salary;
+	int month;
+	for (month = 0; month < employee.working_period; month++)
+	{
+		employee.projected_salary = employee.projected_salary * 1.015;
+	}
+
+	bool is_inserted = false;
+
+	int i;
+	for (i = 0; i < employee_counter; i++)
+	{
+		if (employees[i].status == 2)
+		{
+			employees[i] = employee;
+			is_inserted = true;
+			break;
+		}
+	}
+
+	if (!is_inserted)
+	{
+		employees[i] = employee;
+		employee_counter++;
+	}
+}
+
+void change_status_employee()
+{
+	char id[5];
+	printf("Input employee id: ");
+	scanf("%s", id);
+
+	int employee_index = find_employee(id);
+
+	if (employee_index == -1)
+	{
+		printf("Employee not found!\n");
+	}
+	else
+	{
+		print_employee_details(employees[employee_index]);
+		print_employee_status_list();
+
+		int status_choice;
+
+		do
+		{
+			printf("Input updated status: ");
+			scanf("%d", &status_choice);
+
+			if (status_choice < 1 && status_choice > 3)
+			{
+				printf("Please input a proper status choice!\n");
+			}
+		} while (status_choice < 1 && status_choice > 3);
+
+		employees[employee_index].status = status_choice - 1;
+	}
+}
+
+int find_employee(char id[])
+{
+	int i;
+	for (i = 0; i < employee_counter; i++)
+	{
+		if (strcmp(id, employees[i].id) == 0)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+int count_active_employees()
+{
+	int counter = 0;
+	int i;
+	for (i = 0; i < employee_counter; i++)
+	{
+		if (employees[i].status == 0)
+		{
+			counter++;
+		}
+	}
+
+	return counter;
+}
+
+void generate_employee_id(char name[], char initial[])
+{
+	int length = strlen(name);
+
+	initial[0] = toupper(name[0]);
+	char last_initial = 0;
+
+	int i;
+	for (i = 1; i < length - 1; i++)
+	{
+		if (name[i] == ' ' && name[i + 1] != ' ')
+		{
+			last_initial = toupper(name[i + 1]);
+			initial[1] = toupper(name[i + 1]);
+		}
+	}
+
+	if (last_initial == 0)
+	{
+		initial[1] = initial[0];
+	}
+
+	if (length < 10)
+	{
+		char buffer[2];
+		sprintf(buffer, "%ld", length);
+		initial[2] = '0';
+		initial[3] = buffer[0];
+	}
+	else
+	{
+		char buffer[2];
+		sprintf(buffer, "%ld", length);
+		initial[2] = buffer[0];
+		initial[3] = buffer[1];
+	}
+
+	initial[4] = '\0';
+}
