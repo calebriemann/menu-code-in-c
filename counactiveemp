@@ -1,0 +1,14 @@
+int count_active_employees()
+{
+	int counter = 0;
+	int i;
+	for (i = 0; i < employee_counter; i++)
+	{
+		if (employees[i].status == 0)
+		{
+			counter++;
+		}
+	}
+
+	return counter;
+}
