@@ -1,0 +1,227 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include <stdbool.h>
+#include<windows.h>
+
+void employeeMgmt(), empView(), empReg(), empStatus();
+void menuMgmt();
+void orderMgmt();
+void dailyMgmt();
+
+typedef struct {
+	char id[255];
+	char name[255];
+	int status[30];
+	char period[30];
+	char fee[100];
+	int feeNow;
+}emply;
+
+emply employ[11];
+int employ_count = 0;
+
+int main(){
+	int code = 0;
+	
+	while (code < 1 || code > 4){
+		system("cls");
+		printf("\t50 Snack on Tray\n");
+		printf("================================\n");
+		printf("\n");
+		printf("1. Employee Management\n");
+		printf("2. Menu Management\n");
+		printf("3. Order Management\n");
+		printf("4. Daily Report\n");
+		printf("Enter Option: ");
+		
+		scanf("%d", &code); getchar();
+		
+		switch(code){
+			case 1:
+				employeeMgmt();
+				break;
+			case 2:
+				menuMgmt();
+				break;
+			case 3:
+				orderMgmt();
+				break;
+			case 4:
+				dailyMgmt();
+				break;
+		}	
+	}
+	return 0;
+}
+
+void employeeMgmt(){
+	int code = 0;
+
+	while (code < 1 || code > 3){
+		system("cls");
+		printf("\tEmployee Management\n");
+		printf("===================================\n");
+		printf("\n");
+		printf("1. View\n");
+		printf("2. Register\n");
+		printf("3. Change Status\n");
+		printf("4. Back to Main Menu\n");
+		printf("Enter Option: ");
+		
+		scanf("%d", &code); getchar();
+		
+		switch(code){
+			case 1:
+				empView();
+				break;
+			case 2:
+				empReg();
+				break;
+			case 3:
+				empStatus();
+				break;
+			case 4:
+				main();
+				break;
+		}	
+	}
+}
+
+void empView(){
+	printf("tes\n");
+}
+
+void empReg(){
+	char other;
+	
+	emply emply;
+	
+	do {
+		system("cls");
+		
+		namePoint:
+		printf("Enter Name : ");
+		scanf("%[^\n]", &emply.name); getchar();
+		
+		for(int i = 0; emply.name[i] != '\0'; i++){
+			char nameSum;
+			nameSum = emply.name[i];
+			if (nameSum >= 'a' && nameSum <= 'z' || nameSum >= 'A' && nameSum <= 'Z' || nameSum == ' '){
+				continue;
+			} else{
+				printf("\nHanya Boleh Input Huruf Saja!\n");
+				system("pause");
+				system("cls");
+				goto namePoint;
+			}
+		}
+		
+		statusPoint:
+		printf("Enter Status [Input 1 to active/2 to annual leave/3 to inactive]: ");
+		scanf("%d", &emply.status); getchar();
+		
+		if (emply.status < 1 && emply.status>3){
+			printf("\nHarap Input Sesuai Status! [huruf kecil semua]\n");
+			system("pause");
+			system("cls");
+			printf("Enter Name: %s\n", emply.name);
+			goto statusPoint;
+		} 
+		
+		workingPoint:
+		printf("Enter Working Period [In Months]: ");
+		scanf("%s", &emply.period); getchar();
+	
+		for(int i=0; emply.period[i] != '\0'; i++){
+			int num = 0;
+			char periodSum;
+			periodSum = emply.period[i];
+			
+			if (periodSum >= 48 && periodSum <= 57){
+				num = (num*10 + periodSum-48);
+			} else {
+				printf("\nHanya Boleh Input Angka Saja!\n");
+				system("pause");
+				system("cls");
+				printf("Enter Name: %s\n", emply.name);
+				printf("Enter Status [Input active/annual leave/inactive]: %s\n", emply.status);
+				goto workingPoint;
+			}
+		}
+
+		feePoint:
+		printf("Enter Salary [Rupiah]: ");
+		scanf("%s", &emply.fee); getchar();
+		
+		for(int i=0; emply.fee[i] != '\0'; i++){
+			int num = 0;
+			char periodSum;
+			periodSum = emply.fee[i];
+			
+			if (periodSum >= 48 && periodSum <= 57){
+				num = (num*10 + periodSum-48);
+			} else {
+				printf("\nHanya Boleh Input Angka Saja!\n");
+				system("pause");
+				system("cls");
+				printf("Enter Name: %s\n", emply.name);
+				printf("Enter Status [Input active/annual leave/inactive]: %s\n", emply.status);
+				printf("Enter Working Period [In Months]: %s\n", emply.period);
+				goto feePoint;
+			}
+		}	
+
+		int perMonth;
+		perMonth = atoi(emply.period);
+		int feeAwal;
+		feeAwal = atoi(emply.fee);
+		
+		printf("periode bulan: %d\n", &perMonth);
+		printf("uang awal: %d\n", &feeAwal);
+		
+		for(int j=1; j<=perMonth; j++){
+			emply.feeNow = (feeAwal + (feeAwal*(1.5/100)));
+			printf("Projected Salary: %d",&emply.feeNow);
+		}
+
+
+		printf("\nWant to add another record (Y/N) : ");
+		scanf("%c", &other); getchar();
+		printf("\n");
+		
+	} while (other == 'Y'||other == 'y');
+	
+	bool insert = false;
+
+	int i;
+	for (i = 0; i < employ_count; i++){
+		if (employ[i].status == 2){
+			employ[i] = emply;
+			insert = true;
+			break;
+		}
+	}
+
+		if (!insert){
+			employ[i] = emply;
+			employ_count++;
+		}
+}
+		
+
+void empStatus(){
+	printf("tes\n");
+}
+
+void menuMgmt(){
+	printf("tes\n");
+}
+
+void orderMgmt(){
+	printf("tes\n");
+}
+
+void dailyMgmt(){
+	printf("tes\n");
+}
