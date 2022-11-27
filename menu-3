@@ -1,0 +1,111 @@
+#include<stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <stdbool.h>
+
+#define MAX 10
+typedef char string[255];
+typedef struct{
+	string 	ID;
+    string name;
+    string status;
+    int working_period;
+    int init_sal;
+    int projected_sal;
+}employee;
+
+typedef struct{
+    employee data[MAX];
+}data;
+
+void init(data *b);
+void registerEmp (data *b);
+void changeStatus(data *b, string ID);
+void viewEmployee (data *b);
+
+void init(data *b){
+    int i;
+    for(i=0;i<MAX;i++){
+        strcpy((*b).data[i].ID,"-");
+        strcpy((*b).data[i].name,"-");
+        strcpy((*b).data[i].status,"-");
+        (*b).data[i].working_period=0;
+        (*b).data[i].init_sal=0;
+        (*b).data[i].projected_sal=0;
+    }
+}
+
+void registerEmp(data *b){
+    	int i=0;
+        printf("\n");
+    	for(i=0;i<MAX;i++){
+        fflush(stdin);
+        printf("Name : ");fgets((*b).data[i].name, 50, stdin); 
+        printf("Status : ");scanf("%s", &(*b).data[i].status); getchar();
+        printf("Working Period : ");scanf("%f", &(*b).data[i].working_period); getchar();
+        printf("Initial Salary : ");scanf("%f", &(*b).data[i].init_sal); getchar();
+        char * token = strtok((*b).data[i].name, " ");
+//        (*b).data[i].ID = (*b).data[i].name[0]+(*b).data[i].name[strlen(token)+1])+strlen((*b).data[i].name);
+        printf("\n");
+    }
+}
+
+void viewEmployee(data *b){
+    int i;
+    
+    for(i=0;i<MAX;i++){
+        printf("ID -%d : %s\n", i+1, (*b).data[i].ID); 
+        printf("Name -%d : %s\n", i+1, (*b).data[i].name);
+        printf("Status -%d : %s\n", i+1, (*b).data[i].status);
+        printf("Working Period -%d : %d\n", i+1, (*b).data[i].working_period);
+        printf("Initial Salary -%d : %d\n", i+1, (*b).data[i].init_sal);
+        printf("\n");
+//	    printf("%s\n",token);
+//    	printf("ID: %c\n:",strcat(,));
+    }
+}
+void changeStatus(data *b, string name){
+    int i;
+    bool update=false;
+    for(i=0;i<MAX;i++){
+        if(strcmpi(name, (*b).data[i].name)==0){
+            printf("Status : ");scanf("%d", &(*b).data[i].status);
+            update=true;
+            break;
+        }
+    }
+        if(!update){
+            printf("Data tidak di temukan!\n");
+    }
+}
+
+
+int main(){
+    data b;
+    string input;
+    init(&b);
+    do{
+        system("cls");
+        puts("Menu Program Employee Management");
+        puts("1. View");
+        puts("2. Register");
+        puts("3. Change Status");
+        puts("Esc. Exit");
+        puts("Pilih : ");
+    switch(getch()){
+        case '1' : viewEmployee(&b);
+        break;
+        case '2' : registerEmp(&b);
+        break;
+        case '3' : 
+		fflush(stdin);
+        printf("Insert Employee Name : ");gets(input);
+        changeStatus(&b, input);
+        break;
+    }
+}
+while(getch()!=27);
+getch();
+return 0;
+}
